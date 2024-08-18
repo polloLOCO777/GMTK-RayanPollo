@@ -7,12 +7,16 @@ public class Atractor : MonoBehaviour
 {
     public LayerMask AttractionLayer;
     public float gravity = 10;
-    [SerializeField] private float Radius = 10;
+    public float Radius = 10;
     public List<Collider2D> AttractedObjects = new List<Collider2D>();
     [HideInInspector] public Transform attractorTransform;
 
+    public static Atractor Instance;
+
+
     void Awake()
     {
+        Instance = this;
         attractorTransform = GetComponent<Transform>();
     }
 

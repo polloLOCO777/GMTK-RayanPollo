@@ -769,7 +769,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.5
+  orthographic size: 13.455447
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2620,9 +2620,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttractionLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   gravity: -3
-  Radius: 1
+  Radius: 10
   AttractedObjects: []
   attractorTransform: {fileID: 0}
 --- !u!58 &841425754
@@ -2682,10 +2682,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 865843987}
+  - component: {fileID: 865843990}
   - component: {fileID: 865843986}
   - component: {fileID: 865843988}
   - component: {fileID: 865843989}
-  - component: {fileID: 865843990}
   - component: {fileID: 865843991}
   m_Layer: 7
   m_Name: Player
@@ -2817,20 +2817,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b834dd047fb3355459188e8b00e1046a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Velocidad: 7
+  velocidad: 7
   fuerzaSalto: 8
   fuerzaSaltoLava: 0
   capaSuelo:
     serializedVersion: 2
     m_Bits: 64
-  Mover: 0
-  JumpDust: {fileID: 3651304874372395655, guid: 771567e082f1b284eaaea6a6ac7575fa, type: 3}
-  JumpTr: {fileID: 1527334480}
-  DustCaminar: {fileID: 3931267279142193010, guid: 4d4ccf3d97b23394989291d4dbba2e0a, type: 3}
-  TimeToPart: 0
-  TimetoDestroyPart: 0.1
-  SaltarAlPrincipio: 0
-  flip: {fileID: 1533741135}
+  timeToDestroyPart: 0.1
+  saltarAlPrincipio: 0
+  spriteRenderer: {fileID: 1533741135}
+  dustPosition: {fileID: 1527334480}
+  jumpDust: {fileID: 3651304874372395655, guid: 771567e082f1b284eaaea6a6ac7575fa, type: 3}
+  dustCaminar: {fileID: 3931267279142193010, guid: 4d4ccf3d97b23394989291d4dbba2e0a, type: 3}
 --- !u!212 &865843991
 SpriteRenderer:
   m_ObjectHideFlags: 0

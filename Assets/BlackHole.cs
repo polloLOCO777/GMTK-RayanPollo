@@ -18,7 +18,9 @@ public class BlackHole : MonoBehaviour
         Part.localScale += new Vector3(0.1f, 0.1f);
         Atractor.Instance.Radius += 0.5f;
         Atractor.Instance.gravity -= 1f;
-        Map.Instance.TimeToAbsorb -= 0.2f;
+
+        Map.Instance.SetTimeToAbsorb(Map.Instance.GetTimeToAbsorb() - .2f);
+
         Invoke("Bigger", 0.15f);
         Invoke("Bigger", 0.05f);
         Invoke("Bigger", 0.1f);

@@ -1,19 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Map : MonoBehaviour
 {
-    public GameObject[] map;
-    public int MapCount;
-    public Transform BlackHole;
-    public float Timer;
-    public float TimeToAbsorb;
-    public int Elegido;
-    public GameObject Remplasar;
+    [SerializeField] float timeToAbsorb = 5;
+
+    public float GetTimeToAbsorb() => timeToAbsorb;
+    public float SetTimeToAbsorb(float value) => timeToAbsorb = value;
+
+    [SerializeField] GameObject Remplasar; // replace
+
     public static Map Instance;
+
+    List<GameObject> map;
+    float timer;
+    int elegido; // elected
+    
     
     private void Awake()
     {
@@ -22,25 +28,31 @@ public class Map : MonoBehaviour
 
     void Start()
     {
-        map = GameObject.FindGameObjectsWithTag("Block");
-        BlackHole = GameObject.FindGameObjectWithTag("Destroyer").transform;
+        map = GameObject.FindGameObjectsWithTag("Block").ToList();
     }
-
 
     private void FixedUpdate()
     {
-        Timer += Time.deltaTime;
-        MapCount = map.Length;
+        timer += Time.fixedDeltaTime;
     }
 
     private void Update()
     {
-        if (Timer > TimeToAbsorb)
-        {
-            Timer = 0;
-            Elegido = Random.Range(0, MapCount);
-            Instantiate(Remplasar, map[Elegido].transform.position, transform.rotation);
-            Destroy(map[Elegido]);
-        }
+        if (timer <= timeToAbsorb)
+            return;
+
+        timer = 0;
+        DestroyRandomTile();
+    }
+
+    /// <summary>
+    ///     Chooses a random tile from the map to destroy.
+    /// </summary>
+    void DestroyRandomTile()
+    {
+        elegido = Random.Range(0, map.Count);
+        Instantiate(Remplasar, map[elegido].transform.position, transform.rotation);
+        Destroy(map[elegido]);
+        map.RemoveAt(elegido);
     }
 }

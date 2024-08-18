@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Destroyer
   - Block
+  - BlackHole
   layers:
   - Default
   - TransparentFX

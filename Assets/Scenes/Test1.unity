@@ -583,6 +583,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BlockGone: {fileID: 7079835114583954354, guid: 7bbe4275fbf10ad48aada9c6b2a88225, type: 3}
+--- !u!1 &454979248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 454979249}
+  m_Layer: 0
+  m_Name: InactiveMap
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &454979249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454979248}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.5059141, y: -0.5342878, z: 0.11916409}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &499386207
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,7 +800,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 13.455447
+  orthographic size: 7.5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2618,13 +2649,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd862a83e790eb74fa37cd01ea7fe809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttractionLayer:
+  attractionLayer:
     serializedVersion: 2
     m_Bits: 0
   gravity: -3
-  Radius: 10
-  AttractedObjects: []
-  attractorTransform: {fileID: 0}
+  radius: 10
 --- !u!58 &841425754
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2672,7 +2701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d8fae275f893334aa41863e46d037eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Part: {fileID: 1113504498}
+  part: {fileID: 1113504498}
 --- !u!1 &865843985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2823,7 +2852,7 @@ MonoBehaviour:
   capaSuelo:
     serializedVersion: 2
     m_Bits: 64
-  timeToDestroyPart: 0.1
+  timeToCreatePart: 0.1
   saltarAlPrincipio: 0
   spriteRenderer: {fileID: 1533741135}
   dustPosition: {fileID: 1527334480}
@@ -13245,11 +13274,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1241929623}
+  - component: {fileID: 1241929624}
   - component: {fileID: 1241929622}
   - component: {fileID: 1241929621}
   - component: {fileID: 1241929620}
   - component: {fileID: 1241929619}
-  - component: {fileID: 1241929624}
   m_Layer: 6
   m_Name: Square
   m_TagString: Block
@@ -14185,13 +14214,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3281541a0c067c44d9ca13675dcbf7af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: []
-  MapCount: 0
-  BlackHole: {fileID: 0}
-  Timer: 0
-  TimeToAbsorb: 5
-  Elegido: 0
+  timeToAbsorb: 5
   Remplasar: {fileID: 7079835114583954354, guid: 7bbe4275fbf10ad48aada9c6b2a88225, type: 3}
+  activeTilesParent: {fileID: 1468673379}
+  <InactiveTilesParent>k__BackingField: {fileID: 454979249}
 --- !u!4 &1468673379
 Transform:
   m_ObjectHideFlags: 0
@@ -26179,3 +26205,4 @@ SceneRoots:
   - {fileID: 865843987}
   - {fileID: 1240788191}
   - {fileID: 1468673379}
+  - {fileID: 454979249}

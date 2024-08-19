@@ -6,12 +6,7 @@ using UnityEngine;
 // Name should be: "Attractor"
 public class Atractor : MonoBehaviour
 {
-    // Variable names should start with a lowercase letter
-    // SerializeField: https://docs.unity3d.com/es/current/ScriptReference/SerializeField.html
-    [field: SerializeField] LayerMask attractionLayer;
-
-    // Properties begin with an uppercase letter
-    // Properties: https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/properties
+    [SerializeField] LayerMask attractionLayer;
     [SerializeField] float gravity = 10;
     [SerializeField] float radius = 10;
 
@@ -20,12 +15,9 @@ public class Atractor : MonoBehaviour
     public void SetGravity(float value) => gravity = value;
     public void SetRadius(float value) => radius = value;
 
-
-    [SerializeField] public List<Collider2D> AttractedObjects = new();
-
+    public List<Collider2D> AttractedObjects { get; private set; } = new();
     public Transform AttractorTransform { get; private set; }
-
-    public static Atractor Instance;
+    public static Atractor Instance { get; private set; }
 
 
     void Awake()

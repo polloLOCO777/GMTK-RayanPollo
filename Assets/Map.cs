@@ -8,19 +8,17 @@ using UnityEngine.Rendering;
 public class Map : MonoBehaviour
 {
     [SerializeField] float timeToAbsorb = 5;
+    [SerializeField] GameObject Remplasar; // replace
+
+    [SerializeField] Transform activeTilesParent;
+    [field: SerializeField] public Transform InactiveTilesParent { get; private set; }
+
+    float timer;
+    public static Map Instance { get; private set; }
 
     public float GetTimeToAbsorb() => timeToAbsorb;
     public float SetTimeToAbsorb(float value) => timeToAbsorb = value;
 
-    [SerializeField] GameObject Remplasar; // replace
-
-    public static Map Instance;
-
-    List<GameObject> map;
-    float timer;
-    int elegido; // elected
-    
-    
     private void Awake()
     {
         Instance = this;
@@ -28,7 +26,6 @@ public class Map : MonoBehaviour
 
     void Start()
     {
-        map = GameObject.FindGameObjectsWithTag("Block").ToList();
     }
 
     private void FixedUpdate()
@@ -42,17 +39,34 @@ public class Map : MonoBehaviour
             return;
 
         timer = 0;
-        DestroyRandomTile();
+        PullInRandomTile();
     }
 
     /// <summary>
-    ///     Chooses a random tile from the map to destroy.
+    ///     Chooses a non-null random tile from the map to pull into the black hole.
     /// </summary>
-    void DestroyRandomTile()
+    void PullInRandomTile()
     {
-        elegido = Random.Range(0, map.Count);
-        Instantiate(Remplasar, map[elegido].transform.position, transform.rotation);
-        Destroy(map[elegido]);
-        map.RemoveAt(elegido);
+        int childCount = activeTilesParent.childCount;
+        if (childCount == 0) 
+            return;
+
+        int randomIndex = Random.Range(0, childCount);
+        GameObject randomTile = activeTilesParent.GetChild(randomIndex).gameObject;
+
+        PullInTile(randomTile);
+    }
+
+    /// <summary>
+    ///     Pulls a given tile into the black hole.
+    /// </summary>
+    /// <param name="tile">
+    ///     Tile to pull in.
+    /// </param>
+    void PullInTile(GameObject tile)
+    {
+        Instantiate(Remplasar, tile.transform.position, tile.transform.rotation);
+        tile.SetActive(false);
+        tile.transform.SetParent(InactiveTilesParent);
     }
 }

@@ -6,12 +6,14 @@ using UnityEngine;
 public class BlackHoleColl : MonoBehaviour
 {
     public GameObject BlockGone;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Destroyer"))
         {
             Instantiate(BlockGone, transform.position, transform.rotation);
-            Destroy(gameObject);
+            transform.SetParent(Map.Instance.InactiveTilesParent);
+            gameObject.SetActive(false);
         }
     }
 }

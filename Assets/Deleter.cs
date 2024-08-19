@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 public class Deleter : MonoBehaviour
 {
-    public Tilemap destructibleTilemap;
+    [SerializeField] Tilemap destructibleTilemap;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

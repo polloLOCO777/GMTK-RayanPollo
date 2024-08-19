@@ -4,11 +4,13 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 public class Map : MonoBehaviour
 {
     [SerializeField] float timeToAbsorb = 5;
-    [SerializeField] GameObject Remplasar; // replace
+    [FormerlySerializedAs("Remplasar")]
+    [SerializeField] GameObject remplasar; // replacement
 
     [SerializeField] Transform activeTilesParent;
     [field: SerializeField] public Transform InactiveTilesParent { get; private set; }
@@ -29,35 +31,25 @@ public class Map : MonoBehaviour
         if (timer > timeToAbsorb)
         {
             timer = 0;
-            PullInRandomTile();
+            DisableRandomTile();
         }
     }
 
     /// <summary>
     ///     Chooses a random tile to pull into the black hole.
     /// </summary>
-    void PullInRandomTile()
+    void DisableRandomTile()
     {
         int childCount = activeTilesParent.childCount;
         if (childCount == 0) 
             return;
 
-        int randomIndex = Random.Range(0, childCount);
-        GameObject randomTile = activeTilesParent.GetChild(randomIndex).gameObject;
+        int random = Random.Range(0, childCount);
+        GameObject randomTile = activeTilesParent.GetChild(random).gameObject;
 
-        PullInTile(randomTile);
-    }
-
-    /// <summary>
-    ///     Pulls a given tile into the black hole.
-    /// </summary>
-    /// <param name="tile">
-    ///     Tile to pull in.
-    /// </param>
-    void PullInTile(GameObject tile)
-    {
-        Instantiate(Remplasar, tile.transform.position, tile.transform.rotation);
-        tile.SetActive(false);
-        tile.transform.SetParent(InactiveTilesParent);
+        // Disable tile and create proxy
+        Instantiate(remplasar, randomTile.transform.position, randomTile.transform.rotation);
+        randomTile.SetActive(false);
+        randomTile.transform.SetParent(InactiveTilesParent);
     }
 }

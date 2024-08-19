@@ -4,58 +4,53 @@ using UnityEngine;
 
 public class Atractable : MonoBehaviour
 {
-    [SerializeField] private bool rotateToCenter = true;
-    [SerializeField] private Atractor currentAttractor;
-    [SerializeField] private float gravityStrength = 100;
+    [SerializeField] bool rotateToCenter = true;
+    [SerializeField] float gravityStrength = 100;
+    [SerializeField] Atractor currentAttractor;
 
-    Transform m_transform;
-    Collider2D m_collider;
-    Rigidbody2D m_rigdibody;
+    new Collider2D collider;
+    Rigidbody2D rigdibody;
 
     private void Start()
     {
-        m_transform = GetComponent<Transform>();
-        m_collider = GetComponent<Collider2D>();
-        m_rigdibody = GetComponent<Rigidbody2D>();
+        collider = GetComponent<Collider2D>();
+        rigdibody = GetComponent<Rigidbody2D>();
     }
 
     private void Update()
     {
-        if (currentAttractor != null)
+        if (currentAttractor == null)
         {
-            if (!currentAttractor.AttractedObjects.Contains(m_collider))
-            {
-                currentAttractor = null;
-                return;
-            }
-            if (rotateToCenter) RotateToCenter();
-            m_rigdibody.gravityScale = 0;
+            rigdibody.gravityScale = 2;
+            return;
         }
-        else
+
+        if (!currentAttractor.AttractedObjects.Contains(collider))
         {
-            m_rigdibody.gravityScale = 2;
+            currentAttractor = null;
+            return;
         }
+
+        if (rotateToCenter) RotateToCenter();
+            rigdibody.gravityScale = 0;
     }
 
     public void Attract(Atractor attractorObj)
     {
-        Vector2 attractionDir = ((Vector2)attractorObj.attractorTransform.position - m_rigdibody.position).normalized;
-        m_rigdibody.AddForce(attractionDir * -attractorObj.gravity * gravityStrength * Time.fixedDeltaTime);
+        Vector2 attractionDir = ((Vector2)attractorObj.AttractorTransform.position - rigdibody.position).normalized;
+        rigdibody.AddForce(-attractorObj.GetGravity() * gravityStrength * Time.fixedDeltaTime * attractionDir);
 
         if (currentAttractor == null)
-        {
             currentAttractor = attractorObj;
-        }
-
     }
 
     void RotateToCenter()
     {
-        if (currentAttractor != null)
-        {
-            Vector2 distanceVector = (Vector2)currentAttractor.attractorTransform.position - (Vector2)m_transform.position;
-            float angle = Mathf.Atan2(distanceVector.y, distanceVector.x) * Mathf.Rad2Deg;
-            m_transform.rotation = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        }
+        if (currentAttractor == null)
+            return;
+
+        Vector2 distanceVector = (Vector2)currentAttractor.AttractorTransform.position - (Vector2)transform.position;
+        float angle = Mathf.Atan2(distanceVector.y, distanceVector.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.AngleAxis(angle + 90, Vector3.forward);
     }
 }

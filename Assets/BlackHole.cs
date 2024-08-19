@@ -16,14 +16,15 @@ public class BlackHole : MonoBehaviour
     {
         transform.localScale += new Vector3(0.1f, 0.1f);
         Part.localScale += new Vector3(0.1f, 0.1f);
-        Atractor.Instance.Radius += 0.5f;
-        Atractor.Instance.gravity -= 1f;
+
+        Atractor.Instance.SetRadius(Atractor.Instance.GetRadius() + .5f);
+        Atractor.Instance.SetGravity(Atractor.Instance.GetRadius() - 1);
 
         Map.Instance.SetTimeToAbsorb(Map.Instance.GetTimeToAbsorb() - .2f);
 
-        Invoke("Bigger", 0.15f);
-        Invoke("Bigger", 0.05f);
-        Invoke("Bigger", 0.1f);
+        Invoke(nameof(Bigger), 0.15f);
+        Invoke(nameof(Bigger), 0.05f);
+        Invoke(nameof(Bigger), 0.1f);
     }
 
     public void Bigger()

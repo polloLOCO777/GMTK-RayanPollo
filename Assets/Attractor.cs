@@ -19,10 +19,6 @@ public class Attractor : MonoBehaviour
     public void SetRadius(float value) => radius = value;
 
     public List<Attractable> NearbyAttractableObjectys { get; private set; } = new();
-    public static Attractor Instance { get; private set; }
-
-    void Awake()
-        => Instance = this;
 
     private void Start()
     {
@@ -31,11 +27,14 @@ public class Attractor : MonoBehaviour
     }
 
     void OnEnable()
-        => BlockGone.OnBlockDisappearEventHandler += HandleBlockDisappear;
+        => BlockGone.OnProxyDisappearEventHandler += HandleBlockDisappear;
 
     private void OnDisable()
-        => BlockGone.OnBlockDisappearEventHandler -= HandleBlockDisappear;
+        => BlockGone.OnProxyDisappearEventHandler -= HandleBlockDisappear;
 
+    /// <summary>
+    ///     Pulls in nearby attractable objects.
+    /// </summary>
     void Update()
     {
         FindNearybyAttractableObjects();
@@ -76,7 +75,7 @@ public class Attractor : MonoBehaviour
     /// <summary>
     ///     Increases pull strength and pull radius for all attractors, when any black hole eats a tile.
     /// </summary>
-    void HandleBlockDisappear(object sender, BlockGone.BlockDisappearEventArgs e)
+    void HandleBlockDisappear(object sender, BlockGone.ProxyDisappearEventArgs e)
     {
         radius += radiusIncreasePerTile;
         gravity += gravityIncreasePerTile;

@@ -2526,8 +2526,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d8fae275f893334aa41863e46d037eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  timeToAbsorb: 5
   part: {fileID: 1113504498}
-  blockGone: {fileID: 4201170520103252771, guid: 7bbe4275fbf10ad48aada9c6b2a88225, type: 3}
 --- !u!114 &841425756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13840,8 +13840,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3281541a0c067c44d9ca13675dcbf7af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeToAbsorb: 1
-  remplasar: {fileID: 7079835114583954354, guid: 7bbe4275fbf10ad48aada9c6b2a88225, type: 3}
+  blockProxy: {fileID: 4201170520103252771, guid: 7bbe4275fbf10ad48aada9c6b2a88225, type: 3}
   activeTilesParent: {fileID: 1468673379}
   <InactiveTilesParent>k__BackingField: {fileID: 454979249}
 --- !u!4 &1468673379

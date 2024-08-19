@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class CineMachineMovimientoCamara : MonoBehaviour
 {
-    public static CineMachineMovimientoCamara Instance;
-
     CinemachineVirtualCamera cinemachineVirtualCamera;
 
     CinemachineBasicMultiChannelPerlin CinemachineBasicMultiChannelPerlin;
@@ -17,15 +15,14 @@ public class CineMachineMovimientoCamara : MonoBehaviour
     float intensidadInicial;
 
     private void OnEnable()
-        => BlockGone.OnBlockDisappearEventHandler += HandleBlockDissapear;
+        => BlockGone.OnProxyDisappearEventHandler += HandleBlockDissapear;
     
     private void OnDisable()
-        => BlockGone.OnBlockDisappearEventHandler -= HandleBlockDissapear;
+        => BlockGone.OnProxyDisappearEventHandler -= HandleBlockDissapear;
     
 
     void Awake()
     {
-        Instance = this;
         cinemachineVirtualCamera = GetComponent<CinemachineVirtualCamera>();
         CinemachineBasicMultiChannelPerlin = cinemachineVirtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
@@ -48,6 +45,6 @@ public class CineMachineMovimientoCamara : MonoBehaviour
         TiempoMovimiento = tiempo;
     }
 
-    void HandleBlockDissapear(object sender, BlockGone.BlockDisappearEventArgs e)
+    void HandleBlockDissapear(object sender, BlockGone.ProxyDisappearEventArgs e)
         => MoverCamara(1, 1, 0.5f);
 }

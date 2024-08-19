@@ -1,31 +1,62 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
-using static UnityEditor.Progress;
-using static UnityEngine.ParticleSystem;
 
 public class BlackHole : MonoBehaviour
 {
+    [SerializeField] float timeToAbsorb = 5;
     [SerializeField] Transform part;
-
-    [SerializeField] BlockGone blockGone;
 
     public static BlackHole Instance;
 
+    float timer;
+
+    public static event EventHandler<TugTileEventArgs> OnTugTileEventHandler;
+    public static event EventHandler<ConsumeEventArgs> OnConsumeEventHandler;
+
+    public class TugTileEventArgs { }
+    public class ConsumeEventArgs 
+    {
+        public enum ObjectType { Tile }
+
+        public readonly ObjectType objectType;
+        public readonly GameObject gameObject;
+        public readonly Collider2D collider;
+        public readonly Transform transform;
+
+        public ConsumeEventArgs(ObjectType _objectType, Collider2D _collider)
+        {
+            collider = _collider;
+            objectType = _objectType;
+            gameObject = _collider.gameObject;
+            transform = _collider.transform;
+        }
+    }
+
     private void OnEnable()
-        => BlockGone.OnBlockDisappearEventHandler += HandleBlockDisappear;
+        => BlockGone.OnProxyDisappearEventHandler += HandleProxyDisappear;
 
     private void OnDisable()
-        => BlockGone.OnBlockDisappearEventHandler -= HandleBlockDisappear;
+        => BlockGone.OnProxyDisappearEventHandler -= HandleProxyDisappear;
 
     private void Awake()
         => Instance = this;
 
+    /// <summary>
+    ///     Informs listeners we're ready to pull in a tile.
+    /// </summary>
     private void Update()
     {
-        if (transform.localScale != new Vector3(0f, 0f, 1f))
-            return;
+        timer += Time.deltaTime;
+
+        if (timer > timeToAbsorb)
+        {
+            timer = 0;
+            OnTugTile(new());
+        }
     }
 
     /// <summary>
@@ -36,12 +67,23 @@ public class BlackHole : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Block":
-                Instantiate(blockGone, collision.transform.position, collision.transform.rotation); // Move this into different script
-                collision.transform.SetParent(Map.Instance.InactiveTilesParent);
-                collision.gameObject.SetActive(false);
+                OnConsume(new(ConsumeEventArgs.ObjectType.Tile, collision));
             break;
         }
     }
+
+    /// <summary>
+    ///     Raised every n seconds to begin pulling in a tile.
+    /// </summary>
+    void OnTugTile(TugTileEventArgs e)
+        => OnTugTileEventHandler?.Invoke(this, e);
+
+    /// <summary>
+    ///     Raised when a tile is too close to the black hole. 
+    /// </summary>
+    /// <param name="e"></param>
+    void OnConsume(ConsumeEventArgs e)
+        => OnConsumeEventHandler?.Invoke(this, e);
 
     /// <summary>
     ///     Increase the size of the black hole.
@@ -59,12 +101,12 @@ public class BlackHole : MonoBehaviour
     ///         2. Increase the size of the black hole.
     ///     </para>
     /// </summary>
-    void HandleBlockDisappear(object sender, BlockGone.BlockDisappearEventArgs e)
+    void HandleProxyDisappear(object sender, BlockGone.ProxyDisappearEventArgs e)
     {
         transform.localScale += new Vector3(0.1f, 0.1f);
         part.localScale += new Vector3(0.1f, 0.1f);
 
-        Map.Instance.SetTimeToAbsorb(Map.Instance.GetTimeToAbsorb() - .2f);
+        timeToAbsorb -= .2f;
 
         Invoke(nameof(Bigger), 0.05f);
         Invoke(nameof(Bigger), 0.1f);

@@ -16,9 +16,9 @@ public class BlockGone : MonoBehaviour
     Transform blackHole;
     float timer;
 
-    public static event EventHandler<BlockDisappearEventArgs> OnBlockDisappearEventHandler;
+    public static event EventHandler<ProxyDisappearEventArgs> OnProxyDisappearEventHandler;
 
-    public class BlockDisappearEventArgs : EventArgs { }
+    public class ProxyDisappearEventArgs : EventArgs { }
 
     void Start()
     {
@@ -49,10 +49,10 @@ public class BlockGone : MonoBehaviour
         if (transform.localScale != new Vector3(0f, 0f, 1f))
             return;
 
-        OnBlockDisappear(new());
+        OnProxyDisappear(new());
         Destroy(gameObject);
     }
 
-    void OnBlockDisappear(BlockDisappearEventArgs e)
-        => OnBlockDisappearEventHandler?.Invoke(this, e);
+    void OnProxyDisappear(ProxyDisappearEventArgs e)
+        => OnProxyDisappearEventHandler?.Invoke(this, e);
 }

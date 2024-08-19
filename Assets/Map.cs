@@ -26,7 +26,7 @@ public class Map : MonoBehaviour
     {
         timer += Time.deltaTime;
 
-        if (timer <= timeToAbsorb)
+        if (timer > timeToAbsorb)
         {
             timer = 0;
             PullInRandomTile();

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BlackHoleColl : MonoBehaviour
 {
+    [Header("Prefabs")]
     public GameObject BlockGone;
 
     private void OnTriggerEnter2D(Collider2D collision)

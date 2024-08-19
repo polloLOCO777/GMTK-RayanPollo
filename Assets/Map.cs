@@ -1,46 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 public class Map : MonoBehaviour
 {
-    public GameObject[] map;
-    public int MapCount;
-    public Transform BlackHole;
-    public float Timer;
-    public float TimeToAbsorb;
-    public int Elegido;
-    public GameObject Remplasar;
-    public static Map Instance;
-    
-    private void Awake()
+    [FormerlySerializedAs("Remplasar")]
+    [SerializeField] BlockGone blockProxy; // remplasar
+
+    [SerializeField] Transform activeTilesParent;
+    [field: SerializeField] public Transform InactiveTilesParent { get; private set; }
+
+    private void OnEnable()
     {
-        Instance = this;
+        BlackHole.OnConsumeEventHandler += HandleConsume;
+        BlackHole.OnTugTileEventHandler += HandlePullRandomTile;
+    } 
+
+    private void OnDisable()
+    {
+        BlackHole.OnConsumeEventHandler -= HandleConsume;
+        BlackHole.OnTugTileEventHandler -= HandlePullRandomTile;
+    } 
+
+    /// <summary>
+    ///     Disables a random tile and creates a tile proxy.
+    /// </summary>
+    void HandlePullRandomTile(object sender, BlackHole.TugTileEventArgs e)
+    {
+        int childCount = activeTilesParent.childCount;
+        if (childCount == 0) 
+            return;
+
+        int random = Random.Range(0, childCount);
+        GameObject randomTile = activeTilesParent.GetChild(random).gameObject;
+
+        Instantiate(blockProxy, randomTile.transform.position, randomTile.transform.rotation);
+        randomTile.SetActive(false);
+        randomTile.transform.SetParent(InactiveTilesParent);
     }
 
-    void Start()
+    /// <summary>
+    ///     Pulls tiles nearby the black hole into the black hole.
+    /// </summary>
+    /// <param name="e">Details about the object being consumed.</param>
+    void HandleConsume(object sender, BlackHole.ConsumeEventArgs e)
     {
-        map = GameObject.FindGameObjectsWithTag("Block");
-        BlackHole = GameObject.FindGameObjectWithTag("Destroyer").transform;
-    }
+        if (e.objectType != BlackHole.ConsumeEventArgs.ObjectType.Tile)
+            return;
 
-
-    private void FixedUpdate()
-    {
-        Timer += Time.deltaTime;
-        MapCount = map.Length;
-    }
-
-    private void Update()
-    {
-        if (Timer > TimeToAbsorb)
-        {
-            Timer = 0;
-            Elegido = Random.Range(0, MapCount);
-            Instantiate(Remplasar, map[Elegido].transform.position, transform.rotation);
-            Destroy(map[Elegido]);
-        }
+        Instantiate(blockProxy, e.transform.position, e.transform.rotation);
+        e.transform.SetParent(InactiveTilesParent);
+        e.gameObject.SetActive(false);
     }
 }

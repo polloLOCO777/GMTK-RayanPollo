@@ -1,133 +1,147 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
-    public float Velocidad;
-    public float fuerzaSalto;
-    public float fuerzaSaltoLava;
-    public LayerMask capaSuelo;
+    [Header("Properties")]
+    [Header("Player Movement")]
+    [FormerlySerializedAs("Velocidad")]
+    [Tooltip("Velocity")]
+    [SerializeField] float velocidad;
+    [Tooltip("Jump Strength")]
+    [SerializeField] float fuerzaSalto;
+    [Tooltip("Floor Mask")]
+    [SerializeField] LayerMask capaSuelo;
+
+    [FormerlySerializedAs("TimetoDestroyPart")]
+    [SerializeField] float timeToCreatePart;
+    [FormerlySerializedAs("SaltarAlPrincipio")]
+    [Tooltip("Skip To Top")]
+
+    [Header("Components")]
+    [FormerlySerializedAs("flip")]
+    [SerializeField] SpriteRenderer spriteRenderer;
+    [SerializeField] Rigidbody2D rigidBody;
+    [SerializeField] BoxCollider2D boxCollider;
+    [SerializeField] Animator animator;
+
+    [Header("Prefabs")]
+    [SerializeField] GameObject jumpDust;
+    [Tooltip("Dust Particles")]
+    [SerializeField] GameObject dustCaminar;
+
+    [Header("Other")]
+    [SerializeField] Transform dustPosition;
+    Transform particleHolder;
 
     public static Player Instance;
 
-    public bool Mover;
-
-    public GameObject JumpDust;
-    public Transform JumpTr;
-    public GameObject DustCaminar;
-
-    public float TimeToPart;
-    public float TimetoDestroyPart;
-
-    private Rigidbody2D rigidBody;
-    private BoxCollider2D boxCollider;
-    private Animator anim;
-
-    public bool SaltarAlPrincipio;
-
-    public SpriteRenderer flip;
-
-
-
-
+    float particleTimer;
+    bool canMove;
+    
     private void Awake()
-    {
-        Instance = this;
-    }
+        => Instance = this;
 
     private void Start()
     {
-        Time.timeScale = 1;
-        rigidBody = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
-        rigidBody = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        if (SaltarAlPrincipio)
-        {
-            rigidBody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
-        }
-        Mover = true;
+        particleHolder = GameObject.Find("Particles").transform;
 
+        Time.timeScale = 1;
+
+        canMove = true;
     }
 
     void Update()
     {
-        TimeToPart += Time.deltaTime;
+        particleTimer += Time.deltaTime;
         ProcesarMovimiento();
         ProcesarSalto();
     }
 
-
+    /// <summary>
+    ///     Checks if the player is grounded.
+    /// </summary>
+    /// <returns>
+    ///     True if the player is grounded.
+    /// </returns>
     bool EstaEnSuelo()
     {
         RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x, boxCollider.bounds.size.y), 0f, Vector2.down, 0.2f, capaSuelo);
         return raycastHit.collider == true;
-
     }
 
+    /// <summary>
+    ///     <para>
+    ///     Controls jump. <br/>
+    ///     Controls jump animation.
+    ///     </para>
+    /// </summary>
     void ProcesarSalto()
     {
-        if (Mover)
+        if (!canMove)
+            return;
+
+        // Jump
+        bool isGrounded = EstaEnSuelo();
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && EstaEnSuelo())
-            {
-                rigidBody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
-                Instantiate(JumpDust, JumpTr.position, JumpTr.rotation);
-            }
-
-
-            if (EstaEnSuelo())
-            {
-                anim.SetBool("Jump", false);
-                rigidBody.rotation = 0f;
-            }
-            else
-            {
-                anim.SetBool("Jump", true);
-            }
+            rigidBody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
+            Instantiate(jumpDust, dustPosition.position, dustPosition.rotation);
         }
 
+        // Play animations
+        if (isGrounded)
+        {
+            animator.SetBool("Jump", false);
+            rigidBody.rotation = 0f;
+        }
+        else
+            animator.SetBool("Jump", true);
     }
 
+    /// <summary>
+    ///     <para>
+    ///         Moves player.               <br/>
+    ///         Creates dust particles.     <br/>
+    ///         Controls run animation.     <br/>
+    ///         Flips player on x-axis.     <br/>
+    ///     </para>
+    /// </summary>
     void ProcesarMovimiento()
     {
+        if (!canMove)
+            return;
+
+        // Move player
         float inputMovimiento = Input.GetAxis("Horizontal");
-        Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
+        rigidBody.velocity = new Vector2(inputMovimiento * velocidad, rigidBody.velocity.y);
 
-        if (Mover)
+        // Play animations
+        if (inputMovimiento != 0)
+            animator.SetBool("Run", true);
+        else
+            animator.SetBool("Run", false);
+
+        // Create dust particles
+        if (inputMovimiento != 0 && EstaEnSuelo())
         {
-            rigidbody.velocity = new Vector2(inputMovimiento * Velocidad, rigidbody.velocity.y);
-
-            if (inputMovimiento != 0)
+            if (particleTimer > timeToCreatePart)
             {
-                anim.SetBool("Run", true);
-            }
-            else
-            {
-                anim.SetBool("Run", false);
-            }
+                particleTimer = 0;
+                var dustParticle = Instantiate(dustCaminar, dustPosition.position, dustPosition.rotation);
 
-            if (inputMovimiento != 0 && EstaEnSuelo())
-            {
-                if (TimeToPart > TimetoDestroyPart)
-                {
-                    TimeToPart = 0;
-                    Instantiate(DustCaminar, JumpTr.position, JumpTr.rotation);
-                }
-            }
-
-            if (inputMovimiento > 0)
-            {
-                flip.flipX = false;
-            }
-
-            if (inputMovimiento < 0)
-            {
-                flip.flipX = true;
-
+                if (particleHolder != null)
+                    dustParticle.transform.SetParent(particleHolder);
             }
         }
 
+        // Flip Player
+        if (inputMovimiento > 0)
+            spriteRenderer.flipX = false;
+        else if (inputMovimiento < 0)
+            spriteRenderer.flipX = true;
     }
 }

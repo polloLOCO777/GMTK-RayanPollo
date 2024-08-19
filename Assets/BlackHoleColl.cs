@@ -1,20 +1,11 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Obsolete("Functionality moved to BlackHole Script")]
 public class BlackHoleColl : MonoBehaviour
 {
-    [Header("Prefabs")]
-    public GameObject BlockGone;
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Destroyer"))
-        {
-            Instantiate(BlockGone, transform.position, transform.rotation);
-            transform.SetParent(Map.Instance.InactiveTilesParent);
-            gameObject.SetActive(false);
-        }
-    }
 }

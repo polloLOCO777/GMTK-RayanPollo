@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,10 @@ public class BlockGone : MonoBehaviour
     Transform blackHole;
     float timer;
 
+    public static event EventHandler<ProxyDisappearEventArgs> OnProxyDisappearEventHandler;
+
+    public class ProxyDisappearEventArgs : EventArgs { }
+
     void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
@@ -27,6 +32,7 @@ public class BlockGone : MonoBehaviour
     private void FixedUpdate()
     {
         timer += Time.deltaTime;
+
         if (timer <= lifeTime)
             return;
 
@@ -43,8 +49,10 @@ public class BlockGone : MonoBehaviour
         if (transform.localScale != new Vector3(0f, 0f, 1f))
             return;
 
-        CineMachineMovimientoCamara.Instance.MoverCamara(1, 1, 0.5f);
-        BlackHole.Instance.More();
+        OnProxyDisappear(new());
         Destroy(gameObject);
     }
+
+    void OnProxyDisappear(ProxyDisappearEventArgs e)
+        => OnProxyDisappearEventHandler?.Invoke(this, e);
 }

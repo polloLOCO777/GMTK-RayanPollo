@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.UIElements;
 using UnityEngine;
 
 public class BlackHole : MonoBehaviour
@@ -10,12 +9,10 @@ public class BlackHole : MonoBehaviour
     [SerializeField] float timeToAbsorb = 5;
     [SerializeField] Transform part;
 
-    public static BlackHole Instance;
-
-    float timer;
-
     public static event EventHandler<TugTileEventArgs> OnTugTileEventHandler;
     public static event EventHandler<ConsumeEventArgs> OnConsumeEventHandler;
+    
+    float timer;
 
     public class TugTileEventArgs { }
     public class ConsumeEventArgs 
@@ -41,9 +38,6 @@ public class BlackHole : MonoBehaviour
 
     private void OnDisable()
         => BlockGone.OnProxyDisappearEventHandler -= HandleProxyDisappear;
-
-    private void Awake()
-        => Instance = this;
 
     /// <summary>
     ///     Informs listeners we're ready to pull in a tile.

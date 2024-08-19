@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -36,6 +37,19 @@ public class Player : MonoBehaviour
     [Header("Other")]
     [SerializeField] Transform dustPosition;
     Transform particleHolder;
+    float inputMovimiento;
+    public static event EventHandler<PlayerActionEventArgs> OnPlayerActionEventHandler;
+
+    public class PlayerActionEventArgs : EventArgs
+    {
+        public enum ActionType { Step, Jump }
+
+        public readonly ActionType action;
+        public PlayerActionEventArgs(ActionType _action)
+        {
+            action = _action;
+        }
+    }
 
     public static Player Instance;
 
@@ -90,6 +104,8 @@ public class Player : MonoBehaviour
         {
             rigidBody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
             Instantiate(jumpDust, dustPosition.position, dustPosition.rotation);
+
+            OnPlayerAction(new(PlayerActionEventArgs.ActionType.Jump));
         }
 
         // Play animations
@@ -116,7 +132,7 @@ public class Player : MonoBehaviour
             return;
 
         // Move player
-        float inputMovimiento = Input.GetAxis("Horizontal");
+        inputMovimiento = Input.GetAxis("Horizontal");
         rigidBody.velocity = new Vector2(inputMovimiento * velocidad, rigidBody.velocity.y);
 
         // Play animations
@@ -126,16 +142,15 @@ public class Player : MonoBehaviour
             animator.SetBool("Run", false);
 
         // Create dust particles
-        if (inputMovimiento != 0 && EstaEnSuelo())
+        if (inputMovimiento != 0 && EstaEnSuelo() && particleTimer > timeToCreatePart)
         {
-            if (particleTimer > timeToCreatePart)
-            {
-                particleTimer = 0;
-                var dustParticle = Instantiate(dustCaminar, dustPosition.position, dustPosition.rotation);
+            particleTimer = 0;
+            var dustParticle = Instantiate(dustCaminar, dustPosition.position, dustPosition.rotation);
 
-                if (particleHolder != null)
-                    dustParticle.transform.SetParent(particleHolder);
-            }
+            if (particleHolder != null)
+                dustParticle.transform.SetParent(particleHolder);
+
+            OnPlayerAction(new(PlayerActionEventArgs.ActionType.Step));
         }
 
         // Flip Player
@@ -144,4 +159,10 @@ public class Player : MonoBehaviour
         else if (inputMovimiento < 0)
             spriteRenderer.flipX = true;
     }
+
+    /// <summary>
+    ///     Informs listeners that the player has performed an action.
+    /// </summary>
+    void OnPlayerAction(PlayerActionEventArgs e)
+        => OnPlayerActionEventHandler?.Invoke(this, e);
 }

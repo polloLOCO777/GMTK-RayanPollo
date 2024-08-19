@@ -9,6 +9,7 @@ public class Attractable : MonoBehaviour
     [field: SerializeField] public Rigidbody2D Rigidbody { get; private set; }
 
     bool isBeingPulled;
+    public float GravityScale;
 
     public void SetIsBeingPulled(bool value)
         => isBeingPulled = value;
@@ -18,6 +19,6 @@ public class Attractable : MonoBehaviour
         if (isBeingPulled)
             Rigidbody.gravityScale = 0;
         else
-            Rigidbody.gravityScale = 2;
+            Rigidbody.gravityScale = GravityScale;
     }
 }

@@ -1,20 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class rotate : MonoBehaviour
+public class Rotate : MonoBehaviour
 {
-    public Rigidbody2D rigidBody2D;
+    [Header("Properties")]
+    [FormerlySerializedAs("Speed")]
+    [SerializeField] float speed;
 
-    public float Speed;
+    [Header("Components")]
+    [SerializeField] Rigidbody2D rigidBody2D;
 
-    void Start()
-    {
-        rigidBody2D = GetComponent<Rigidbody2D>();
-    }
-
-    void FixedUpdate()
-    {
-        rigidBody2D.rotation += Speed;
-    }
+    void FixedUpdate() 
+        => rigidBody2D.rotation += speed;
 }

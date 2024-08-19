@@ -12,38 +12,29 @@ public class Map : MonoBehaviour
 
     [SerializeField] Transform activeTilesParent;
     [field: SerializeField] public Transform InactiveTilesParent { get; private set; }
-
-    float timer;
     public static Map Instance { get; private set; }
+    
+    float timer;
 
     public float GetTimeToAbsorb() => timeToAbsorb;
     public float SetTimeToAbsorb(float value) => timeToAbsorb = value;
 
     private void Awake()
-    {
-        Instance = this;
-    }
-
-    void Start()
-    {
-    }
-
-    private void FixedUpdate()
-    {
-        timer += Time.fixedDeltaTime;
-    }
+        => Instance = this;
 
     private void Update()
     {
-        if (timer <= timeToAbsorb)
-            return;
+        timer += Time.deltaTime;
 
-        timer = 0;
-        PullInRandomTile();
+        if (timer <= timeToAbsorb)
+        {
+            timer = 0;
+            PullInRandomTile();
+        }
     }
 
     /// <summary>
-    ///     Chooses a non-null random tile from the map to pull into the black hole.
+    ///     Chooses a random tile to pull into the black hole.
     /// </summary>
     void PullInRandomTile()
     {

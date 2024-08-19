@@ -7,7 +7,7 @@ public class BlockGone : MonoBehaviour
     [Header("Properties")]
     [SerializeField] float power = 3; // potencia
     [SerializeField] float speed = 8;
-    [SerializeField] float timeToGo = 1;
+    [SerializeField] float lifeTime = 1;
 
     [Header("Components")]
     [SerializeField] Rigidbody2D rigidBody2D;
@@ -27,7 +27,7 @@ public class BlockGone : MonoBehaviour
     private void FixedUpdate()
     {
         timer += Time.deltaTime;
-        if (timer <= timeToGo)
+        if (timer <= lifeTime)
             return;
 
         transform.position = Vector2.Lerp(transform.position, blackHole.position, power * Time.deltaTime);

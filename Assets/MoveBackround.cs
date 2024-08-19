@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MoveBackround : MonoBehaviour
 {
-    public float speed;
-    public float speedUp;
+    [Header("Properties")]
+    [SerializeField] float speed;
 
-    public Renderer rendererBg;
+    [Header("Components")]
+    [FormerlySerializedAs("rendererBg")]
+    [SerializeField] Renderer rendererBackground;
 
     // Update is called once per frame
     void Update()
-    {
-        rendererBg.material.mainTextureOffset += new Vector2(speed * Time.deltaTime, speedUp * Time.deltaTime);
-    }
+        => rendererBackground.material.mainTextureOffset += new Vector2(speed * Time.deltaTime, 0 * Time.deltaTime);
 }

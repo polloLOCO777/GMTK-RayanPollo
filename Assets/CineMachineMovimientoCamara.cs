@@ -7,16 +7,16 @@ public class CineMachineMovimientoCamara : MonoBehaviour
 {
     public static CineMachineMovimientoCamara Instance;
 
-    private CinemachineVirtualCamera cinemachineVirtualCamera;
+    CinemachineVirtualCamera cinemachineVirtualCamera;
 
-    private CinemachineBasicMultiChannelPerlin CinemachineBasicMultiChannelPerlin;
+    CinemachineBasicMultiChannelPerlin CinemachineBasicMultiChannelPerlin;
 
-    private float TiempoMovimiento;
+    float TiempoMovimiento;
 
-    private float tiempoMovimientoTotal;
-    private float intensidadInicial;
+    float tiempoMovimientoTotal;
+    float intensidadInicial;
 
-    private void Awake()
+    void Awake()
     {
         Instance = this;
         cinemachineVirtualCamera = GetComponent<CinemachineVirtualCamera>();
@@ -32,7 +32,7 @@ public class CineMachineMovimientoCamara : MonoBehaviour
         TiempoMovimiento = tiempo;
     }
 
-    private void Update()
+    void Update()
     {
         if (TiempoMovimiento > 0)
         {

@@ -19,7 +19,6 @@ public class Atractor : MonoBehaviour
     public Transform AttractorTransform { get; private set; }
     public static Atractor Instance { get; private set; }
 
-
     void Awake()
     {
         Instance = this;

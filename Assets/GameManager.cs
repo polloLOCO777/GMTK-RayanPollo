@@ -34,9 +34,6 @@ public class GameManager : Singleton<GameManager>
         var previousState = CurrentState;
         CurrentState = newState;
 
-        OnStateChange(new(newState, previousState));
+        OnStateChangeEventHandler?.Invoke(this, new (newState, previousState));
     }
-
-    void OnStateChange(StateChangeEventArgs e)
-        => OnStateChangeEventHandler?.Invoke(this, e);
 }

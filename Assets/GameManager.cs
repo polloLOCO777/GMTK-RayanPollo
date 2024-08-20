@@ -6,9 +6,12 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public enum GameState { LevelStart, LevelLose, LevelRestart, LevelWin, }
+    public enum GameState { StartLevel, LoseLevel, RestartLevel, WinLevel, }
 
     public static event EventHandler<StateChangeEventArgs> OnStateChangeEventHandler;
+
+    public GameState CurrentState { get; private set; }
+
     public class StateChangeEventArgs : EventArgs
     {
         public readonly GameState newState;
@@ -23,7 +26,20 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public GameState CurrentState { get; private set; }
+    private void OnEnable()
+    {
+        Goal.OnReachGoalEventHandler += HandleReachGoal;
+    }
+
+    private void OnDisable()
+    {
+        Goal.OnReachGoalEventHandler -= HandleReachGoal;
+    }
+
+    void HandleReachGoal(object sender, EventArgs e)
+    {
+        UpdateGameState(GameState.WinLevel);
+    }
 
     /// <summary>
     ///     Informs listeners on how to align with the current state of the game.

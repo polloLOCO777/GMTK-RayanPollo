@@ -31,7 +31,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         switch (e.newState)
         {
-            case GameManager.GameState.LevelStart:
+            case GameManager.GameState.StartLevel:
                 if (e.levelToLoad == -1)
                     throw new NotImplementedException();
 
@@ -40,12 +40,12 @@ public class LevelManager : Singleton<LevelManager>
                 LoadLevel(e.levelToLoad);
             break;
             
-            case GameManager.GameState.LevelLose:
-            case GameManager.GameState.LevelRestart:
+            case GameManager.GameState.LoseLevel:
+            case GameManager.GameState.RestartLevel:
                 LoadLevel(CurrentLevel);
             break;
             
-            case GameManager.GameState.LevelWin:
+            case GameManager.GameState.WinLevel:
                 LoadLevel(CurrentLevel + 1);
             break;
         }

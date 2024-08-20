@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public enum GameState { StartGame, StartLevel, LoseLevel, RestartLevel, WinLevel, }
+    public enum GameState { OpenGame, StartGame, StartLevel, LoseLevel, RestartLevel, WinLevel, }
 
     public static event EventHandler<StateChangeEventArgs> OnStateChangeEventHandler;
 

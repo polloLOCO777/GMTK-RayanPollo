@@ -11,9 +11,12 @@ public class AudioManager : Singleton<AudioManager>
     [Header("Player")]
     [SerializeField] List<AudioSource> walkCycle;
     [SerializeField] AudioSource jump;
+    [SerializeField] AudioSource land;
 
-    [SerializeField] ListSelectionType stepSelectionType;
-    [SerializeField] ResponseType onStepAlreadyPlaying;
+    [Header("Player Sounds Properties")]
+    [SerializeField] ListSelectionType stepShuffleType;
+    [SerializeField] AlreadyPlayingResponse stepAlreadyPlayingResponse;
+    [SerializeField] AlreadyPlayingResponse jumpAlreadyPlayingResponse;
     [SerializeField] float timeBetweenSteps;
 
     [Header("UI")]
@@ -30,12 +33,22 @@ public class AudioManager : Singleton<AudioManager>
     [Header("Black Hole")]
     [SerializeField] AudioSource blackHoleGrow;
 
+    [Header("Black Hole Properties")]
+    [SerializeField] AlreadyPlayingResponse growAlreadyPlayingResponse;
+
     [Header("Tile Proxy")]
     [SerializeField] AudioSource tugTile;
     [SerializeField] AudioSource tileDisappear;
-    float stepTimer;
+
+    [Header("Tile Sound Properties")]
+    [SerializeField] AlreadyPlayingResponse tugAlreadyPlayingResponse;
+    [SerializeField] AlreadyPlayingResponse disappearAlreadyPlayingResponse;
+
+    [field: Header("Default Settings")]
+    [field: SerializeField] public AlreadyPlayingResponse DefaultResponseType { get; private set; }
 
     int stepIndex;
+    float stepTimer;
 
     enum PlayerSounds { Step, Jump }
     enum UISounds { Select, Back }
@@ -45,18 +58,20 @@ public class AudioManager : Singleton<AudioManager>
     {
         Player.OnPlayerActionEventHandler += HandlePlayerAction;
         BlockGone.OnProxyEventHandler += HandleProxyAction;
+        BlackHole.OnGrowEventHandler += HandleBlackHoleGrow;
     }
 
     private void OnDisable()
     {
         Player.OnPlayerActionEventHandler -= HandlePlayerAction;
         BlockGone.OnProxyEventHandler -= HandleProxyAction;
+        BlackHole.OnGrowEventHandler -= HandleBlackHoleGrow;
     }
 
     private void Start()
     {
-        startLevel.Play();
-        gameMusic.Play();
+        startLevel.AdvancedPlay();
+        gameMusic.AdvancedPlay();
     }
 
     private void Update()
@@ -69,19 +84,18 @@ public class AudioManager : Singleton<AudioManager>
         switch (e.action)
         {
             case BlockGone.ProxyEventArgs.ActionType.ShrinkStart:
-                tugTile.Play();
+                tugTile.AdvancedPlay(tugAlreadyPlayingResponse);
             break;
 
             case BlockGone.ProxyEventArgs.ActionType.Disappear:
-                tileDisappear.Play(ResponseType.DontPlay);
-                blackHoleGrow.Play(ResponseType.DontPlay, delay: .15f);
+                tileDisappear.AdvancedPlay(disappearAlreadyPlayingResponse);
             break;
         }
     }
 
     void HandleBlackHoleGrow(object sender, EventArgs e)
     {
-        blackHoleGrow.Play();
+        blackHoleGrow.AdvancedPlay(growAlreadyPlayingResponse);
     }
 
     void HandlePlayerAction(object sender, Player.PlayerActionEventArgs e)
@@ -89,11 +103,11 @@ public class AudioManager : Singleton<AudioManager>
         switch (e.action)
         {
             case Player.PlayerActionEventArgs.ActionType.Step:
-                PlaySourceFromList(walkCycle, stepSelectionType, ref stepIndex, onStepAlreadyPlaying, canPlay: () => stepTimer > timeBetweenSteps, onPlay: () => stepTimer = 0);
+                PlaySourceFromList(walkCycle, stepShuffleType, ref stepIndex, stepAlreadyPlayingResponse, canPlay: () => stepTimer > timeBetweenSteps, onPlay: () => stepTimer = 0);
             break;
 
             case Player.PlayerActionEventArgs.ActionType.Jump:
-                jump.Play();
+                jump.AdvancedPlay(jumpAlreadyPlayingResponse);
             break;
         }
     }
@@ -136,7 +150,7 @@ public class AudioManager : Singleton<AudioManager>
     /// <param name="onAlreadyPlaying"> Method if source is already playing. </param>
     /// <param name="delay"></param>
     /// <exception cref="System.NotImplementedException"></exception>
-    void PlaySourceFromList(List<AudioSource> audioSources, ListSelectionType selectionType, ref int currentIndex, ResponseType onAlreadyPlaying, float delay = 0, Func<bool> canPlay = null, Action onPlay = null)
+    void PlaySourceFromList(List<AudioSource> audioSources, ListSelectionType selectionType, ref int currentIndex, AlreadyPlayingResponse onAlreadyPlaying = AlreadyPlayingResponse.Default, float delay = 0, Func<bool> canPlay = null, Action onPlay = null)
     {
         currentIndex = selectionType switch
         {
@@ -145,6 +159,6 @@ public class AudioManager : Singleton<AudioManager>
             _ => throw new NotImplementedException(),
         };
 
-        audioSources[currentIndex].Play(onAlreadyPlaying, delay, canPlay, onPlay);
+        audioSources[currentIndex].AdvancedPlay(onAlreadyPlaying, delay, canPlay, onPlay);
     }
 }

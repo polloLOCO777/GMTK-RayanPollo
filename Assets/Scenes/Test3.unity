@@ -2586,7 +2586,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 6fc1028314ce6564fadb782c3a974d21, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.45
+  m_Volume: 0.125
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -3200,6 +3200,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d8fae275f893334aa41863e46d037eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  growthTargets:
+  - 2.3
+  - 4.4
+  - 8
+  - 16
+  timeUntilGrowthCheck: 6
   timeToAbsorb: 5
   part: {fileID: 1113504498}
 --- !u!114 &841425756
@@ -3775,7 +3781,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &971840792
 Transform:
   m_ObjectHideFlags: 0
@@ -15878,9 +15884,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 41cd67a541cd9a147b3ec10d933a438d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 5e4376890f7de6143896b94e869fe82d, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -17274,7 +17280,10 @@ MonoBehaviour:
   - {fileID: 405423942}
   - {fileID: 2041435529}
   jump: {fileID: 758083403}
-  stepSelectionType: 0
+  land: {fileID: 971840793}
+  stepShuffleType: 0
+  stepAlreadyPlayingResponse: 1
+  jumpAlreadyPlayingResponse: 2
   timeBetweenSteps: 0.21
   select: {fileID: 909223746}
   back: {fileID: 1509892591}
@@ -17284,6 +17293,9 @@ MonoBehaviour:
   blackHoleGrow: {fileID: 1361924827}
   tugTile: {fileID: 898320662}
   tileDisappear: {fileID: 1761396850}
+  tugAlreadyPlayingResponse: 0
+  disappearAlreadyPlayingResponse: 0
+  <DefaultResponseType>k__BackingField: 1
 --- !u!1 &1947578325
 GameObject:
   m_ObjectHideFlags: 0

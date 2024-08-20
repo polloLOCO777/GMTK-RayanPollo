@@ -1,11 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class BlackHole : MonoBehaviour
 {
+    [SerializeField] List<float> growthTargets = new();
+    [SerializeField] float timeUntilGrowthCheck;
     [SerializeField] float timeToAbsorb = 5;
     [SerializeField] Transform part;
 
@@ -13,7 +14,9 @@ public class BlackHole : MonoBehaviour
     public static event EventHandler OnTugTileEventHandler;
     public static event EventHandler OnGrowEventHandler;
 
-    float timer;
+    float tugTileTimer;
+
+    int growthTargetIndex;
 
     public class BlackHoleEventArgs { }
     public class ConsumeEventArgs 
@@ -36,7 +39,7 @@ public class BlackHole : MonoBehaviour
 
     private void OnEnable()
         => BlockGone.OnProxyEventHandler += HandleProxyAction;
-
+    
     private void OnDisable()
         => BlockGone.OnProxyEventHandler -= HandleProxyAction;
 
@@ -45,11 +48,11 @@ public class BlackHole : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        timer += Time.deltaTime;
+        tugTileTimer += Time.deltaTime;
 
-        if (timer > timeToAbsorb)
+        if (tugTileTimer > timeToAbsorb)
         {
-            timer = 0;
+            tugTileTimer = 0;
             OnTugTile(new());
         }
     }
@@ -75,7 +78,14 @@ public class BlackHole : MonoBehaviour
         transform.localScale += new Vector3(0.1f, 0.1f);
         part.localScale += new Vector3(0.1f, 0.1f);
 
-        OnGrow(new());
+        if (growthTargetIndex >= growthTargets.Count)
+            return;
+
+        if (transform.localScale.x >= growthTargets[growthTargetIndex])
+        {
+            growthTargetIndex++;
+            OnGrow(new());
+        }
     }
 
     /// <summary>

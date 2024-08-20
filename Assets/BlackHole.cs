@@ -9,12 +9,13 @@ public class BlackHole : MonoBehaviour
     [SerializeField] float timeToAbsorb = 5;
     [SerializeField] Transform part;
 
-    public static event EventHandler<TugTileEventArgs> OnTugTileEventHandler;
     public static event EventHandler<ConsumeEventArgs> OnConsumeEventHandler;
-    
+    public static event EventHandler OnTugTileEventHandler;
+    public static event EventHandler OnGrowEventHandler;
+
     float timer;
 
-    public class TugTileEventArgs { }
+    public class BlackHoleEventArgs { }
     public class ConsumeEventArgs 
     {
         public enum ObjectType { Tile }
@@ -34,10 +35,10 @@ public class BlackHole : MonoBehaviour
     }
 
     private void OnEnable()
-        => BlockGone.OnProxyDisappearEventHandler += HandleProxyDisappear;
+        => BlockGone.OnProxyEventHandler += HandleProxyAction;
 
     private void OnDisable()
-        => BlockGone.OnProxyDisappearEventHandler -= HandleProxyDisappear;
+        => BlockGone.OnProxyEventHandler -= HandleProxyAction;
 
     /// <summary>
     ///     Informs listeners we're ready to pull in a tile.
@@ -67,25 +68,14 @@ public class BlackHole : MonoBehaviour
     }
 
     /// <summary>
-    ///     Raised every n seconds to begin pulling in a tile.
-    /// </summary>
-    void OnTugTile(TugTileEventArgs e)
-        => OnTugTileEventHandler?.Invoke(this, e);
-
-    /// <summary>
-    ///     Raised when a tile is too close to the black hole. 
-    /// </summary>
-    /// <param name="e"></param>
-    void OnConsume(ConsumeEventArgs e)
-        => OnConsumeEventHandler?.Invoke(this, e);
-
-    /// <summary>
     ///     Increase the size of the black hole.
     /// </summary>
     public void Bigger()
     {
         transform.localScale += new Vector3(0.1f, 0.1f);
         part.localScale += new Vector3(0.1f, 0.1f);
+
+        OnGrow(new());
     }
 
     /// <summary>
@@ -95,8 +85,11 @@ public class BlackHole : MonoBehaviour
     ///         2. Increase the size of the black hole.
     ///     </para>
     /// </summary>
-    void HandleProxyDisappear(object sender, BlockGone.ProxyDisappearEventArgs e)
+    void HandleProxyAction(object sender, BlockGone.ProxyEventArgs e)
     {
+        if (e.action != BlockGone.ProxyEventArgs.ActionType.Disappear)
+            return;
+
         transform.localScale += new Vector3(0.1f, 0.1f);
         part.localScale += new Vector3(0.1f, 0.1f);
 
@@ -106,4 +99,24 @@ public class BlackHole : MonoBehaviour
         Invoke(nameof(Bigger), 0.1f);
         Invoke(nameof(Bigger), 0.15f);
     }
- }
+
+    /// <summary>
+    ///     Raised every n seconds to begin pulling in a tile.
+    /// </summary>
+    void OnTugTile(EventArgs e)
+        => OnTugTileEventHandler?.Invoke(this, e);
+
+    /// <summary>
+    ///     Called whenever the black hole grows in size
+    /// </summary>
+    /// <param name="e"></param>
+    void OnGrow(EventArgs e)
+        => OnGrowEventHandler?.Invoke(this, e);
+
+    /// <summary>
+    ///     Raised when a tile is too close to the black hole. 
+    /// </summary>
+    /// <param name="e"></param>
+    void OnConsume(ConsumeEventArgs e)
+        => OnConsumeEventHandler?.Invoke(this, e);
+}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,13 +30,13 @@ public class Map : MonoBehaviour
     /// <summary>
     ///     Disables a random tile and creates a tile proxy.
     /// </summary>
-    void HandlePullRandomTile(object sender, BlackHole.TugTileEventArgs e)
+    void HandlePullRandomTile(object sender, EventArgs e)
     {
         int childCount = activeTilesParent.childCount;
         if (childCount == 0) 
             return;
 
-        int random = Random.Range(0, childCount);
+        int random = UnityEngine.Random.Range(0, childCount);
         GameObject randomTile = activeTilesParent.GetChild(random).gameObject;
 
         Instantiate(blockProxy, randomTile.transform.position, randomTile.transform.rotation);

@@ -15,10 +15,10 @@ public class CineMachineMovimientoCamara : MonoBehaviour
     float intensidadInicial;
 
     private void OnEnable()
-        => BlockGone.OnProxyDisappearEventHandler += HandleBlockDissapear;
+        => BlockGone.OnProxyEventHandler += HandleBlockDissapear;
     
     private void OnDisable()
-        => BlockGone.OnProxyDisappearEventHandler -= HandleBlockDissapear;
+        => BlockGone.OnProxyEventHandler -= HandleBlockDissapear;
     
 
     void Awake()
@@ -45,6 +45,6 @@ public class CineMachineMovimientoCamara : MonoBehaviour
         TiempoMovimiento = tiempo;
     }
 
-    void HandleBlockDissapear(object sender, BlockGone.ProxyDisappearEventArgs e)
+    void HandleBlockDissapear(object sender, BlockGone.ProxyEventArgs e)
         => MoverCamara(1, 1, 0.5f);
 }

@@ -27,10 +27,10 @@ public class Attractor : MonoBehaviour
     }
 
     void OnEnable()
-        => BlockGone.OnProxyDisappearEventHandler += HandleBlockDisappear;
+        => BlockGone.OnProxyEventHandler += HandleBlockDisappear;
 
     private void OnDisable()
-        => BlockGone.OnProxyDisappearEventHandler -= HandleBlockDisappear;
+        => BlockGone.OnProxyEventHandler -= HandleBlockDisappear;
 
     /// <summary>
     ///     Pulls in nearby attractable objects.
@@ -75,7 +75,7 @@ public class Attractor : MonoBehaviour
     /// <summary>
     ///     Increases pull strength and pull radius for all attractors, when any black hole eats a tile.
     /// </summary>
-    void HandleBlockDisappear(object sender, BlockGone.ProxyDisappearEventArgs e)
+    void HandleBlockDisappear(object sender, BlockGone.ProxyEventArgs e)
     {
         radius += radiusIncreasePerTile;
         gravity += gravityIncreasePerTile;

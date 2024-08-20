@@ -16,13 +16,28 @@ public class BlockGone : MonoBehaviour
     Transform blackHole;
     float timer;
 
-    public static event EventHandler<ProxyDisappearEventArgs> OnProxyDisappearEventHandler;
+    public static event EventHandler<ProxyEventArgs> OnProxyEventHandler;
 
-    public class ProxyDisappearEventArgs : EventArgs { }
+    public class ProxyEventArgs : EventArgs 
+    { 
+        public enum ActionType { Appear, ShrinkStart, Disappear }
+
+        public readonly ActionType action;
+
+        public ProxyEventArgs(ActionType _action)
+        {
+            action = _action;
+        }
+    }
+
+    bool hasStartedShrinking;
+
+    private void OnEnable()
+        => hasStartedShrinking = false;
 
     void Start()
     {
-        rigidBody2D = GetComponent<Rigidbody2D>();
+        OnProxy(new(ProxyEventArgs.ActionType.Appear));
         blackHole = GameObject.FindGameObjectWithTag("Destroyer").transform;
     }
 
@@ -36,7 +51,13 @@ public class BlockGone : MonoBehaviour
         if (timer <= lifeTime)
             return;
 
-        transform.position = Vector2.Lerp(transform.position, blackHole.position, power * Time.deltaTime);
+        if (!hasStartedShrinking)
+        {
+            OnProxy(new(ProxyEventArgs.ActionType.ShrinkStart));
+            hasStartedShrinking = true;
+        }
+
+        transform.position = Vector2.Lerp(transform.position, blackHole.position, power * Time.fixedDeltaTime);
         transform.localScale -= new Vector3(0.02f, 0.02f);
         rigidBody2D.rotation += speed;
     }
@@ -49,10 +70,10 @@ public class BlockGone : MonoBehaviour
         if (transform.localScale != new Vector3(0f, 0f, 1f))
             return;
 
-        OnProxyDisappear(new());
+        OnProxy(new(ProxyEventArgs.ActionType.Disappear));
         Destroy(gameObject);
     }
 
-    void OnProxyDisappear(ProxyDisappearEventArgs e)
-        => OnProxyDisappearEventHandler?.Invoke(this, e);
+    void OnProxy(ProxyEventArgs e)
+        => OnProxyEventHandler?.Invoke(this, e);
 }

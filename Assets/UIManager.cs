@@ -26,11 +26,13 @@ public class MenuManager : Singleton<MenuManager>
     public bool IsGamePaused { get; private set; }
 
     readonly Menu emptyMenu = new();
-    Menu previousMenu;
-    Menu currentMenu ;
+
+    Menu previousMenu; // Update to be more sophisticated
+    Menu currentMenu;
 
     readonly List<Menu> menusToClear = new();
     readonly List<Menu> menuHistory = new();
+    int currentHistoryIndex = 0;
 
     KeyCode pauseKey = KeyCode.Escape;
 
@@ -98,7 +100,7 @@ public class MenuManager : Singleton<MenuManager>
     ///     Loads the contents for a given menu while unloading the previous menu's.
     /// </summary>
     /// <param name="menu"> Menu to load. </param>
-    void LoadMenu(Menu menu)
+    void LoadMenu(Menu menu, bool addToHistory = true)
     {
         menuHistory.Add(menu);
         previousMenu = currentMenu;
@@ -123,5 +125,23 @@ public class MenuManager : Singleton<MenuManager>
                 emptyMenu.ObjectsToDisable.Add(menuObject);
             menusToClear.Add(menu);
         }
+    }
+
+    /// <summary>
+    /// Loads the menu of the previous index in the menu history
+    /// </summary>
+    void PreviousMenu()
+    {
+        if (currentHistoryIndex == 0)
+            return;
+
+        if (currentHistoryIndex >= menuHistory.Count)
+            throw new Exception("Index out of bounds");
+
+        menuHistory.RemoveAt(currentHistoryIndex);
+        
+        // -2 to account for removing an item and going back an item
+        currentHistoryIndex--;
+        LoadMenu(menuHistory[currentHistoryIndex--], false);
     }
 }

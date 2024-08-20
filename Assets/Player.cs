@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
@@ -36,7 +37,6 @@ public class Player : MonoBehaviour
 
     [Header("Other")]
     [SerializeField] Transform dustPosition;
-    Transform particleHolder;
     float inputMovimiento;
     public static event EventHandler<PlayerActionEventArgs> OnPlayerActionEventHandler;
 
@@ -61,8 +61,6 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        particleHolder = GameObject.Find("Particles").transform;
-
         Time.timeScale = 1;
 
         canMove = true;
@@ -89,8 +87,7 @@ public class Player : MonoBehaviour
 
     /// <summary>
     ///     <para>
-    ///     Controls jump. <br/>
-    ///     Controls jump animation.
+    ///     Plays jump and animation.
     ///     </para>
     /// </summary>
     void ProcesarSalto()
@@ -103,7 +100,7 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rigidBody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
-            Instantiate(jumpDust, dustPosition.position, dustPosition.rotation);
+            Instantiate(jumpDust, dustPosition.position, dustPosition.rotation, HolderManager.Instance.JumpParticleHolder);
 
             OnPlayerAction(new(PlayerActionEventArgs.ActionType.Jump));
         }
@@ -144,11 +141,11 @@ public class Player : MonoBehaviour
         // Create dust particles
         if (inputMovimiento != 0 && EstaEnSuelo() && particleTimer > timeToCreatePart)
         {
+            if (HolderManager.Instance == null)
+                throw new NullReferenceException("Each scene should have a ParentManager prefab. ");
+            
             particleTimer = 0;
-            var dustParticle = Instantiate(dustCaminar, dustPosition.position, dustPosition.rotation);
-
-            if (particleHolder != null)
-                dustParticle.transform.SetParent(particleHolder);
+            Instantiate(dustCaminar, dustPosition.position, dustPosition.rotation, HolderManager.Instance.WalkParticleHolder);
 
             OnPlayerAction(new(PlayerActionEventArgs.ActionType.Step));
         }

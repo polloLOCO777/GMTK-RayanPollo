@@ -27,10 +27,10 @@ public class Attractor : MonoBehaviour
     }
 
     void OnEnable()
-        => BlockGone.OnProxyEventHandler += HandleBlockDisappear;
+        => BlockGone.OnProxyActionEventHandler += HandleProxyAction;
 
     private void OnDisable()
-        => BlockGone.OnProxyEventHandler -= HandleBlockDisappear;
+        => BlockGone.OnProxyActionEventHandler -= HandleProxyAction;
 
     /// <summary>
     ///     Pulls in nearby attractable objects.
@@ -71,14 +71,18 @@ public class Attractor : MonoBehaviour
         }
     }
 
-    // This should not affect all attractors universally, because it inheritly ties all attractors to black holes and all attractors to each other
+
+    // TO DO : Change to respond to a black hole event
     /// <summary>
-    ///     Increases pull strength and pull radius for all attractors, when any black hole eats a tile.
+    ///     Increases pull strength and pull radius for all attractors, when any black hole consumes a tile.
     /// </summary>
-    void HandleBlockDisappear(object sender, BlockGone.ProxyEventArgs e)
+    void HandleProxyAction(object sender, BlockGone.ProxyEventArgs e)
     {
-        radius += radiusIncreasePerTile;
-        gravity += gravityIncreasePerTile;
+        if (e.action == BlockGone.ProxyEventArgs.ActionType.Disappear)
+        {
+            radius += radiusIncreasePerTile;
+            gravity += gravityIncreasePerTile;
+        }
     }
 
     void OnDrawGizmosSelected()

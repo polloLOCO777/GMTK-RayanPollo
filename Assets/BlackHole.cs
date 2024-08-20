@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class BlackHole : MonoBehaviour
 {
+    [Header("Properties")]
     [SerializeField] List<float> growthTargets = new();
     [SerializeField] float timeUntilGrowthCheck;
     [SerializeField] float timeToAbsorb = 5;
+    [SerializeField] float scaleToConsumePlayer;
+
+    [Header("Pats")]
     [SerializeField] Transform part;
+    [SerializeField] ConsumePlayer consumePlayer;
 
     public static event EventHandler<ConsumeEventArgs> OnConsumeEventHandler;
     public static event EventHandler OnTugTileEventHandler;
     public static event EventHandler OnGrowEventHandler;
 
     float tugTileTimer;
-
     int growthTargetIndex;
+
+    bool hasEnabledConsumePlayer;
 
     public class BlackHoleEventArgs { }
     public class ConsumeEventArgs 
@@ -38,10 +43,14 @@ public class BlackHole : MonoBehaviour
     }
 
     private void OnEnable()
-        => BlockGone.OnProxyEventHandler += HandleProxyAction;
-    
+    {
+        consumePlayer.gameObject.SetActive(false);
+        hasEnabledConsumePlayer = false;
+        BlockGone.OnProxyActionEventHandler += HandleProxyAction;
+    }
+
     private void OnDisable()
-        => BlockGone.OnProxyEventHandler -= HandleProxyAction;
+        => BlockGone.OnProxyActionEventHandler -= HandleProxyAction;
 
     /// <summary>
     ///     Informs listeners we're ready to pull in a tile.
@@ -85,6 +94,11 @@ public class BlackHole : MonoBehaviour
         {
             growthTargetIndex++;
             OnGrow(new());
+        }
+        if (transform.localScale.x > scaleToConsumePlayer && !hasEnabledConsumePlayer)
+        {
+            hasEnabledConsumePlayer = true;
+            consumePlayer.gameObject.SetActive(true);
         }
     }
 

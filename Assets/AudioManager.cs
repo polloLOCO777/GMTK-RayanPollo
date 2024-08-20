@@ -57,14 +57,14 @@ public class AudioManager : Singleton<AudioManager>
     private void OnEnable()
     {
         Player.OnPlayerActionEventHandler += HandlePlayerAction;
-        BlockGone.OnProxyEventHandler += HandleProxyAction;
+        BlockGone.OnProxyActionEventHandler += HandleProxyAction;
         BlackHole.OnGrowEventHandler += HandleBlackHoleGrow;
     }
 
     private void OnDisable()
     {
         Player.OnPlayerActionEventHandler -= HandlePlayerAction;
-        BlockGone.OnProxyEventHandler -= HandleProxyAction;
+        BlockGone.OnProxyActionEventHandler -= HandleProxyAction;
         BlackHole.OnGrowEventHandler -= HandleBlackHoleGrow;
     }
 

@@ -16,7 +16,7 @@ public class BlockGone : MonoBehaviour
     Transform blackHole;
     float timer;
 
-    public static event EventHandler<ProxyEventArgs> OnProxyEventHandler;
+    public static event EventHandler<ProxyEventArgs> OnProxyActionEventHandler;
 
     public class ProxyEventArgs : EventArgs 
     { 
@@ -25,19 +25,27 @@ public class BlockGone : MonoBehaviour
         public readonly ActionType action;
 
         public ProxyEventArgs(ActionType _action)
-        {
-            action = _action;
-        }
+            => action = _action;
     }
 
     bool hasStartedShrinking;
 
     private void OnEnable()
-        => hasStartedShrinking = false;
+    {
+        hasStartedShrinking = false;
+
+        GameManager.OnGameStateChangeEventHandler += HandleGameStateChange;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameStateChangeEventHandler -= HandleGameStateChange;
+
+    }
 
     void Start()
     {
-        OnProxy(new(ProxyEventArgs.ActionType.Appear));
+        OnProxyAction(new(ProxyEventArgs.ActionType.Appear));
         blackHole = GameObject.FindGameObjectWithTag("Destroyer").transform;
     }
 
@@ -53,7 +61,7 @@ public class BlockGone : MonoBehaviour
 
         if (!hasStartedShrinking)
         {
-            OnProxy(new(ProxyEventArgs.ActionType.ShrinkStart));
+            OnProxyAction(new(ProxyEventArgs.ActionType.ShrinkStart));
             hasStartedShrinking = true;
         }
 
@@ -70,10 +78,27 @@ public class BlockGone : MonoBehaviour
         if (transform.localScale != new Vector3(0f, 0f, 1f))
             return;
 
-        OnProxy(new(ProxyEventArgs.ActionType.Disappear));
+        OnProxyAction(new(ProxyEventArgs.ActionType.Disappear));
         Destroy(gameObject);
     }
 
-    void OnProxy(ProxyEventArgs e)
-        => OnProxyEventHandler?.Invoke(this, e);
+    /// <summary>
+    ///     Makes sure object doesn't persist beyond a single state.
+    /// </summary>
+    void HandleGameStateChange(object sender, GameManager.StateChangeEventArgs e)
+    {
+        switch (e.newState)
+        {
+            case GameManager.GameState.OpenGame:
+            case GameManager.GameState.StartLevel:
+            case GameManager.GameState.LoseLevel:
+            case GameManager.GameState.RestartLevel:
+            case GameManager.GameState.BeatLevel:
+                Destroy(gameObject);
+            break;
+        }
+    }
+
+    void OnProxyAction(ProxyEventArgs e)
+        => OnProxyActionEventHandler?.Invoke(this, e);
 }

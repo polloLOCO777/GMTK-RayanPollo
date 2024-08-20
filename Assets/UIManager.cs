@@ -52,10 +52,10 @@ public class MenuManager : Singleton<MenuManager>
     }
 
     void OnEnable()
-        => OnStateChangeEventHandler += HandleGameStateChange;
+        => OnGameStateChangeEventHandler += HandleGameStateChange;
 
     void OnDisable()
-        => OnStateChangeEventHandler -= HandleGameStateChange;
+        => OnGameStateChangeEventHandler -= HandleGameStateChange;
 
     private void Update()
         => PauseGame();
@@ -76,7 +76,7 @@ public class MenuManager : Singleton<MenuManager>
                 LoadMenu(emptyMenu);
             break;
             
-            case GameState.WinLevel:
+            case GameState.BeatLevel:
                 LoadMenu(endMenu);
             break;
         }
@@ -102,6 +102,8 @@ public class MenuManager : Singleton<MenuManager>
     /// <param name="menu"> Menu to load. </param>
     void LoadMenu(Menu menu, bool addToHistory = true)
     {
+        return;
+
         menuHistory.Add(menu);
         previousMenu = currentMenu;
         currentMenu = menu;

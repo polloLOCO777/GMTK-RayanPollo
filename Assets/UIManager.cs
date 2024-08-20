@@ -8,20 +8,17 @@ public class MenuManager : Singleton<MenuManager>
     [Header("Main Menu")]
     [SerializeField] Menu mainMenu;
 
+    [Header("Credits")]
+    [SerializeField] Menu credits;
+
     [Header("Pause Menu")]
     [SerializeField] Menu pauseMenu;
 
-    [Header("Win Menu")]
-    [SerializeField] Menu winMenu;
+    [Header("Credits Menu")]
+    [SerializeField] Menu creditsMenu;
 
-    [Header("Lose Menu")]
-    [SerializeField] Menu loseMenu;
-
-    [Header("Loading Screen")]
-    [SerializeField] Menu loadingScreen;
-
-    [Header("Credits")]
-    [SerializeField] Menu credits;
+    [Header("End Menu")]
+    [SerializeField] Menu endMenu;
 
     [Header("Cameras")]
     [SerializeField] Camera userInterfaceCamera;
@@ -33,6 +30,7 @@ public class MenuManager : Singleton<MenuManager>
     Menu currentMenu ;
 
     readonly List<Menu> menusToClear = new();
+    readonly List<Menu> menuHistory = new();
 
     KeyCode pauseKey = KeyCode.Escape;
 
@@ -76,12 +74,8 @@ public class MenuManager : Singleton<MenuManager>
                 LoadMenu(emptyMenu);
             break;
             
-            case GameState.LoseLevel:
-                LoadMenu(loseMenu);
-            break;
-            
             case GameState.WinLevel:
-                LoadMenu(winMenu);
+                LoadMenu(endMenu);
             break;
         }
     }
@@ -106,6 +100,7 @@ public class MenuManager : Singleton<MenuManager>
     /// <param name="menu"> Menu to load. </param>
     void LoadMenu(Menu menu)
     {
+        menuHistory.Add(menu);
         previousMenu = currentMenu;
         currentMenu = menu;
         

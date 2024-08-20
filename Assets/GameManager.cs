@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public enum GameState { StartLevel, LoseLevel, RestartLevel, WinLevel, }
+    public enum GameState { StartGame, StartLevel, LoseLevel, RestartLevel, WinLevel, }
 
     public static event EventHandler<StateChangeEventArgs> OnStateChangeEventHandler;
 
@@ -34,6 +34,11 @@ public class GameManager : Singleton<GameManager>
     private void OnDisable()
     {
         Goal.OnReachGoalEventHandler -= HandleReachGoal;
+    }
+
+    void Start()
+    {
+        UpdateGameState(GameState.StartGame);
     }
 
     void HandleReachGoal(object sender, EventArgs e)

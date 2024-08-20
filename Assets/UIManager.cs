@@ -1,196 +1,132 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using static GameManager;
 
 public class MenuManager : Singleton<MenuManager>
 {
     [Header("Main Menu")]
-    [SerializeField] Canvas mainMenu;
-    [SerializeField] GameObject menuButtons;
-    [SerializeField] GameObject title;
-    [SerializeField] GameObject controls;
-    [SerializeField] GameObject credits;
+    [SerializeField] Menu mainMenu;
 
-    [Header("Pause")]
-    [SerializeField] Canvas pauseMenu;
-    [SerializeField] GameObject controlsPanel;
-    [SerializeField] GameObject settings;
+    [Header("Pause Menu")]
+    [SerializeField] Menu pauseMenu;
 
     [Header("Win Menu")]
-    [SerializeField] Canvas winMenu;
+    [SerializeField] Menu winMenu;
 
     [Header("Lose Menu")]
-    [SerializeField] Canvas loseMenu;
+    [SerializeField] Menu loseMenu;
+
+    [Header("Loading Screen")]
+    [SerializeField] Menu loadingScreen;
+
+    [Header("Credits")]
+    [SerializeField] Menu credits;
 
     [Header("Cameras")]
     [SerializeField] Camera uiCamera;
 
     public bool IsGamePaused { get; private set; }
 
-    // Rework this to include 'substates' of a certain menuState
-    // This would make it easier to add new states, as substates of other states, without haveing to update VirtualCursorActivator, for each state added
-    // Plus, they are already unofficially organized like this through the headers
-    public enum MenuState { Null, MainMenu, GameStart, Pause, Settings, GameResume, GameEnd, PreviousState, Controls, Credits }
+    readonly Menu emptyMenu = new();
+    Menu previousMenu;
+    Menu currentMenu ;
 
-    public MenuState CurrentState { get; private set; }
-    public MenuState PreviousState { get; private set; } = MenuState.Null;
+    readonly List<Menu> menusToClear = new();
 
-    public static event Action<MenuState> OnMenuStateChange;
+    KeyCode pauseKey = KeyCode.Escape;
+
+    [Serializable]
+    class Menu
+    {
+        [field: SerializeField] public Canvas MenuCanvas { get; private set; }
+        [field: SerializeField] public List<GameObject> ObjectsToEnable { get; private set; }
+        [field: SerializeField] public List<GameObject> ObjectsToDisable { get; private set; }
+    }
+
+    void Start()
+    {
+#if DEBUG
+        pauseKey = KeyCode.P;
+#endif
+    }
 
     void OnEnable()
-    {
-        OnStateChangeEventHandler += HandleGameStateChange;
-    }
+        => OnStateChangeEventHandler += HandleGameStateChange;
 
     void OnDisable()
-    {
-        OnStateChangeEventHandler -= HandleGameStateChange;
-    }
+        => OnStateChangeEventHandler -= HandleGameStateChange;
 
     private void Update()
-    {
-        PauseGame();
-    }
+        => PauseGame();
 
-    //This and the play button kind of do the same thing.
+    /// <summary>
+    ///     Loads the menu appropriate to the current game state.
+    /// </summary>
     void HandleGameStateChange(object sender, StateChangeEventArgs e)
     {
         switch (e.newState)
         {
             case GameState.OpenGame:
-            break;
-
-            case GameState.StartGame:
+                LoadMenu(mainMenu);
             break;
             
             case GameState.StartLevel:
+            case GameState.RestartLevel:
+                LoadMenu(emptyMenu);
             break;
             
             case GameState.LoseLevel:
-            break;
-            
-            case GameState.RestartLevel:
+                LoadMenu(loseMenu);
             break;
             
             case GameState.WinLevel:
+                LoadMenu(winMenu);
             break;
         }
-    }
-
-    public void UpdateMenu(MenuState newState)
-    {
-        if (newState != MenuState.PreviousState)
-        {
-            PreviousState = CurrentState;
-            CurrentState = newState;
-        }
-
-        switch (newState)
-        {
-            case MenuState.MainMenu:
-                mainMenu.gameObject.SetActive(true);
-                loseMenu.gameObject.SetActive(false);
-                menuButtons.SetActive(true);
-                title.SetActive(true);
-
-                settings.SetActive(false);
-                credits.SetActive(false);
-                controls.SetActive(false);
-
-                if (!uiCamera.isActiveAndEnabled)
-                {
-                    Debug.LogWarning("MenuCamera was not active. Setting Cam active");
-                    uiCamera.enabled = true;
-                }
-                break;
-
-            case MenuState.GameStart:
-                uiCamera.enabled = false;
-
-                mainMenu.gameObject.SetActive(false);
-            break;
-
-            case MenuState.Pause:
-                IsGamePaused = true;
-
-                uiCamera.enabled = true;
-
-                controlsPanel.SetActive(true);
-                pauseMenu.gameObject.SetActive(true);
-
-                menuButtons.SetActive(false);
-                settings.SetActive(false);
-            break;
-
-            case MenuState.Settings:
-                menuButtons.SetActive(false);
-                controlsPanel.SetActive(false);
-                title.SetActive(false);
-
-                settings.SetActive(true);
-            break;
-
-            case MenuState.Credits:
-                credits.SetActive(true);
-            break;
-
-            case MenuState.Controls:
-                controls.SetActive(true);
-            break;
-
-            case MenuState.GameResume:
-                IsGamePaused = false;
-
-                uiCamera.enabled = false;
-
-                pauseMenu.gameObject.SetActive(false);
-            break;
-
-            case MenuState.GameEnd:
-                uiCamera.enabled = true;
-
-                loseMenu.gameObject.SetActive(true);
-            break;
-
-            case MenuState.PreviousState:
-                UpdateMenu(PreviousState);
-            break;
-
-            default:
-                Debug.Log("Unknown Menu State");
-            break;
-        }
-
-        OnMenuStateChange.Invoke(newState);
     }
 
     /// <summary>
-    ///     Puase and unpause game on escape press.
+    ///     Puase and unpause the game on escape press.
     /// </summary>
     void PauseGame()
     {
-        var keyPress = KeyCode.Escape;
-
-#if DEBUG 
-        keyPress = KeyCode.P;
-#endif
-
-        if (Input.GetKeyDown(keyPress))
+        if (Input.GetKeyDown(pauseKey))
         {
-            switch (CurrentState)
-            {
-                case MenuState.Pause:
-                    UpdateMenu(MenuState.GameResume);
-                    break;
+            if (currentMenu == pauseMenu)
+                LoadMenu(emptyMenu);
+            else if (currentMenu == emptyMenu)
+                LoadMenu(pauseMenu);
+        }
+    }
 
-                case MenuState.GameStart:
-                case MenuState.GameResume:
-                    UpdateMenu(MenuState.Pause);
-                    break;
-            }
+    /// <summary>
+    ///     Loads the contents for a given menu while unloading the previous menu's.
+    /// </summary>
+    /// <param name="menu"> Menu to load. </param>
+    void LoadMenu(Menu menu)
+    {
+        previousMenu = currentMenu;
+        currentMenu = menu;
+        
+        // Ready current menu
+        menu.MenuCanvas.gameObject.SetActive(true);
+        foreach (GameObject menuObject in menu.ObjectsToEnable)
+            menuObject.SetActive(true);
+        foreach (GameObject menuObject in menu.ObjectsToDisable)
+            menuObject.SetActive(false);
+
+        // Clear previous menu
+        previousMenu.MenuCanvas.gameObject.SetActive(false);
+        foreach (GameObject menuObject in previousMenu.ObjectsToEnable)
+            menuObject.SetActive(false);
+
+        // Fill empty menu
+        if (!menusToClear.Contains(menu))
+        {
+            foreach (GameObject menuObject in menu.ObjectsToEnable)
+                emptyMenu.ObjectsToDisable.Add(menuObject);
+            menusToClear.Add(menu);
         }
     }
 }

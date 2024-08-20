@@ -1442,6 +1442,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1438208851}
+  - component: {fileID: 1438208852}
   m_Layer: 0
   m_Name: UIManager
   m_TagString: Untagged
@@ -1464,6 +1465,43 @@ Transform:
   m_Children: []
   m_Father: {fileID: 843061467}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1438208852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1438208850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1849f54057afb244491a34bb853fd69f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainMenu:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  pauseMenu:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  winMenu:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  loseMenu:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  loadingScreen:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  credits:
+    menuCanvas: {fileID: 0}
+    objectsToEnable: []
+    objectsToDisable: []
+  uiCamera: {fileID: 0}
 --- !u!1 &1509892589
 GameObject:
   m_ObjectHideFlags: 0

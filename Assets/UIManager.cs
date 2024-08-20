@@ -24,7 +24,7 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] Menu credits;
 
     [Header("Cameras")]
-    [SerializeField] Camera uiCamera;
+    [SerializeField] Camera userInterfaceCamera;
 
     public bool IsGamePaused { get; private set; }
 
@@ -39,7 +39,7 @@ public class MenuManager : Singleton<MenuManager>
     [Serializable]
     class Menu
     {
-        [field: SerializeField] public Canvas MenuCanvas { get; private set; }
+        [field: SerializeField] public Canvas Canvas { get; private set; }
         [field: SerializeField] public List<GameObject> ObjectsToEnable { get; private set; }
         [field: SerializeField] public List<GameObject> ObjectsToDisable { get; private set; }
     }
@@ -110,14 +110,14 @@ public class MenuManager : Singleton<MenuManager>
         currentMenu = menu;
         
         // Ready current menu
-        menu.MenuCanvas.gameObject.SetActive(true);
+        menu.Canvas.gameObject.SetActive(true);
         foreach (GameObject menuObject in menu.ObjectsToEnable)
             menuObject.SetActive(true);
         foreach (GameObject menuObject in menu.ObjectsToDisable)
             menuObject.SetActive(false);
 
         // Clear previous menu
-        previousMenu.MenuCanvas.gameObject.SetActive(false);
+        previousMenu.Canvas.gameObject.SetActive(false);
         foreach (GameObject menuObject in previousMenu.ObjectsToEnable)
             menuObject.SetActive(false);
 

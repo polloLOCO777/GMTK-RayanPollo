@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 public class Deleter : MonoBehaviour
 {
-    public Tilemap destructibleTilemap;
+    [SerializeField] Tilemap destructibleTilemap;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -19,10 +18,6 @@ public class Deleter : MonoBehaviour
                 hitPos.y = hit.point.y - 0.01f * hit.normal.y;
                 destructibleTilemap.SetTile(destructibleTilemap.WorldToCell(hitPos), null);
             }
-        }
-       
+        }  
     }
-
-
-
 }

@@ -4846,11 +4846,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6921451959045191660}
+  - component: {fileID: 4201170520103252771}
   - component: {fileID: 7710170159052759921}
   - component: {fileID: 8940297690870770285}
   - component: {fileID: 5681198661441993326}
   - component: {fileID: 4038033636667437713}
-  - component: {fileID: 4201170520103252771}
   m_Layer: 6
   m_Name: BlockGone
   m_TagString: Untagged
@@ -4875,6 +4875,24 @@ Transform:
   - {fileID: 3991602490165413204}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4201170520103252771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7079835114583954354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b1903919ea980749a1737367f2c1b96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  power: 3
+  Timer: 0
+  TimeToGo: 1
+  rigidBody2D: {fileID: 5681198661441993326}
+  blackHole: {fileID: 0}
+  Speed: 8
 --- !u!212 &7710170159052759921
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5056,24 +5074,6 @@ CompositeCollider2D:
   m_OffsetDistance: 0.00005
   m_UseDelaunayMesh: 0
   m_CompositeGameObject: {fileID: 7079835114583954354}
---- !u!114 &4201170520103252771
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7079835114583954354}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2b1903919ea980749a1737367f2c1b96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  potencia: 3
-  blackHole: {fileID: 0}
-  Timer: 0
-  TimeToGo: 1
-  rigidBody2D: {fileID: 5681198661441993326}
-  Speed: 8
 --- !u!1 &8634815745743393567
 GameObject:
   m_ObjectHideFlags: 0
